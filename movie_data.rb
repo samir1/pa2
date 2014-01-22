@@ -1,3 +1,5 @@
+# Author: Samir Undavia
+
 class MovieData
 
 	def initialize (folder, set=nil)
