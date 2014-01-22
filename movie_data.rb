@@ -1,12 +1,20 @@
 class MovieData
 
-	def initialize
+	def initialize (folder, set=nil)
 		@popularityMovieToRatings = Hash.new
 		@userRatings = Hash.new
+		@folder = folder
+		@set = set
 	end
 
 	def load_data
-		File.foreach("u.data") do |line|
+		if @set == nil
+			file = "u.data"
+		else
+			file = [@set, "base"].join(".")
+		end
+
+		File.foreach(@folder + "/#{file}") do |line|
 			lineArray = line.split("\t").map(&:to_i)
 			if !@popularityMovieToRatings.has_key?(lineArray[1])
 				@popularityMovieToRatings[lineArray[1]] = 0
@@ -63,7 +71,7 @@ class MovieData
 
 end
 
-movie = MovieData.new
+movie = MovieData.new("ml-100k",:u1)
 movie.load_data
 popList = movie.popularity_list
 puts "first and last ten elements of popularity list"
