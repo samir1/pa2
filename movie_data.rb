@@ -1,37 +1,19 @@
 # Author: Samir Undavia
 
+require "./data_loader"
+require "./movie_test"
+
 class MovieData
 
 	def initialize folder, set=nil
-		@movieRatingSum = Hash.new # {movie_id => sum of ratings}
-		@userMovieRating = Hash.new # {user_id => {movie_id => rating}}
-		@movieUserRating = Hash.new # {movie_id => {user_id => rating}}
-		@folder = folder
-		@set = set
+		data = DataLoader.new folder,set
+
+		@movieRatingSum = data.getMovieRatingSum # {movie_id => sum of ratings}
+		@userMovieRating = data.getUserMovieRating # {user_id => {movie_id => rating}}
+		@movieUserRating = data.getMovieUserRating # {movie_id => {user_id => rating}}
 	end
 
-	def load_data
-		if @set == nil
-			file = "u.data"
-		else
-			file = [@set, "base"].join(".")
-		end
-		File.foreach @folder + "/#{file}" do |line|
-			lineArray = line.split("\t").map(&:to_i)
-            if !@movieRatingSum.has_key?(lineArray[1])
-                    @movieRatingSum[lineArray[1]] = 0
-            end
-            @movieRatingSum[lineArray[1]] += lineArray[2]
-			if !@userMovieRating.has_key?(lineArray[0])
-				@userMovieRating[lineArray[0]] = Hash.new
-			end
-			@userMovieRating[lineArray[0]][lineArray[1]] = lineArray[2]
-			if !@movieUserRating.has_key?(lineArray[1])
-				@movieUserRating[lineArray[1]] = Hash.new
-			end
-			@movieUserRating[lineArray[1]][lineArray[0]] = lineArray[2]
-		end
-	end
+	
 
 	# popularity is the sum of all scores for each movie because if a movie had low scores, but a lot of people rated it, it is sill a popular movie
 	def popularity movie_id
@@ -79,7 +61,9 @@ class MovieData
 		return user
 	end
 
-	#def rating u,m
+	def rating u,m
+		test = MovieTest.new
+	end
 
 	def predict u,m
 		if @userMovieRating[most_similar(u)].has_key?(m)
@@ -97,12 +81,13 @@ class MovieData
 		return @movieUserRating[m].keys
 	end
 
-	#def run_test k
+	def run_test k=nil
+		test = MovieTest.new k
+	end
 
 end
 
 movie = MovieData.new("ml-100k")
-movie.load_data
 popList = movie.popularity_list
 puts "first and last ten elements of popularity list"
 puts popList[0...10]
