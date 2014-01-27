@@ -16,15 +16,21 @@ class LoadData
 		@movies = {}
 	end
 
+    # returns filename
+    def getFilename
+        if @set == nil
+            file = "u.data"
+        elsif @test == nil
+            file = [@set, "base"].join(".")
+        else
+            file = [@set, "test"].join(".")
+        end
+        file
+    end
+
 	# loads data from file
     def load_data
-        if @set == nil
-			file = "u.data"
-		elsif @test == nil
-			file = [@set, "base"].join(".")
-		else
-			file = [@set, "test"].join(".")
-		end
+        file = getFilename
 		thisK = @k
         File.foreach @folder + "/#{file}" do |line|
             if thisK != nil
