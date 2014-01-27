@@ -1,99 +1,113 @@
 # Author: Samir Undavia
 
-require "./data_loader"
-require "./movie_test"
+require 'awesome_print'
+require './movie.rb'
+require './user.rb'
+require './load_data.rb'
+require './movie_test.rb'
 
 class MovieData
 
-	def initialize folder, set=nil
-		data = DataLoader.new folder,set
+    attr_reader :usersData, :moviesData
 
-		@movieRatingSum = data.getMovieRatingSum # {movie_id => sum of ratings}
-		@userMovieRating = data.getUserMovieRating # {user_id => {movie_id => rating}}
-		@movieUserRating = data.getMovieUserRating # {movie_id => {user_id => rating}}
-	end
+    def initialize folder=nil, set=nil
+        @folder = folder
+        @set = set
+        dl = LoadData.new folder, set
+        dl.load_data
+        @usersData = dl.users
+        @moviesData = dl.movies
+    end
 
-	
+    # returns the rating that user u gave movie m in the training set, and 0 if user u did not rate movie m
+    def rating u,m
+        @testData.users[u].data[m] == nil ? 0 : @testData.users[u].data[m]
+    end
 
-	# popularity is the sum of all scores for each movie because if a movie had low scores, but a lot of people rated it, it is sill a popular movie
-	def popularity movie_id
-		pop = 0
-		popArray = @movieUserRating[movie_id].values
-		popArray.each { |a| pop+=a }
-		return pop
-		#return @movieRatingSum[movie_id]
-	end
+    # this will generate a number which indicates the similarity in movie preference between user1 and user2 (where higher numbers indicate greater similarity)
+    def similarity user1, user2, users=@usersData
+        similar = 0
+        for x in users[user1].data.keys
+            if users[user2].data.has_key?(x)
+                similar += 5-((users[user1].data[x]-users[user2].data[x]).abs)
+                if users[user1].data[x] == users[user2].data[x]
+                    similar += 5
+                end
+            end
+        end
+        similar
+    end
 
-	def popularity_list
-		h = @movieRatingSum.sort_by {|k,v| v}.reverse
-		list = Array.new
-		for x in h
-			list.push(x[0])
-		end
-		return list
-	end
+    # this return a list of users whose tastes are most similar to the tastes of user u
+    def most_similar u, users=@usersData
+        sim = 0
+        simArray = Array.new
+        for x in users.keys
+            if x != u
+                currentSim = similarity u, x, users
+                if currentSim > sim
+                    sim = currentSim
+                    simArray = Array.new
+                    simArray.push x
+                elsif currentSim == sim
+                    simArray.push x
+                end
+            end
+        end
+        simArray
+    end
 
-	# similarity sees is user1 has any movies rated in common with user2. If there is a common movie rated, 5-(the distance away from the ratings) is added to similarity, so ratings that are closer to each other have a higher similarity
-	def similarity user1,user2
-		arr1 = @userMovieRating[user1]
-		arr2 = @userMovieRating[user2]
-		similar = 0
-		for x in arr1.keys
-			if arr2.has_key?(x)
-				similar += 5-((arr1[x]-arr2[x]).abs)
-			end
-		end
-		return similar
-	end
-
-	def most_similar u
-		sim = 0
-		user = 0
-		for x in @userMovieRating.keys
-			if x != u
-				currentSim = similarity(u,x)
-				if currentSim > sim
-					sim = currentSim
-					user = x
-				end
-			end
-		end
-		return user
-	end
-
-	def rating u,m
-		test = MovieTest.new
-	end
-
-	def predict u,m
-		if @userMovieRating[most_similar(u)].has_key?(m)
-			return @userMovieRating[most_similar(u)][m]
-		else
-			predict(most_similar(u),m)
-		end
-	end
-
-	def movies u
-		return @userMovieRating[u].keys
-	end
-
-	def viewers m
-		return @movieUserRating[m].keys
-	end
-
-	def run_test k=nil
-		test = MovieTest.new k
-	end
+    # returns a floating point number between 1.0 and 5.0 as an estimate of what user u would rate movie m
+    def predict u, m, users=@usersData
+        sum = 0.0
+        count = 0
+        for item in most_similar u, users
+            if users[item].data[m] != nil
+                count += 1
+                sum += users[item].data[m]
+            end
+        end
+        avg = count != 0 ? sum/count : (users[u].data.values.inject(0) {|a,b|a+b})/users[u].data.size
+        avg == 0 ? 1 : avg
+    end
+    
+    # returns the array of movies that user u has watched
+    def movies u
+        @usersData[u].data.keys
+    end
+    
+    # returns the array of users that have seen movie m
+    def viewers m
+        @moviesData[m].data.keys
+    end
+    
+    # runs the z.predict method on the first k ratings in the test set and returns a MovieTest object containing the results.
+    def run_test k=nil
+        mt = MovieTest.new
+        if @set == nil
+            return mt
+        end
+        @testData = LoadData.new @folder, @set, :test, k
+        @testData.load_data
+        testUsers = @testData.users
+        for u in testUsers.keys
+            for m in testUsers[u].data.keys
+                p = predict u, m, testUsers
+                mt.add u, m, (rating u, m), p
+            end
+        end
+        return mt
+    end
 
 end
 
-movie = MovieData.new("ml-100k")
-popList = movie.popularity_list
-puts "first and last ten elements of popularity list"
-puts popList[0...10]
-puts "..."
-puts popList[popList.length-10..popList.length]
+md = MovieData.new "ml-100k", :u1
+mt = md.run_test 1000
+# ap mt.to_a
 puts
 puts
-puts "most_similar(1)"
-puts movie.most_similar(1)
+puts
+puts "Mean: #{mt.mean}"
+puts "Std dev: #{mt.stddev}"
+puts md.rating 1,6
+print md.most_similar(1)
