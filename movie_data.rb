@@ -29,12 +29,18 @@ class MovieData
     end
 
     ##
+    # returns how far apart the users' ratings are
+    def getScore users, user1, x, user2
+        5-((users[user1].data[x]-users[user2].data[x]).abs)
+    end
+
+    ##
     # this will generate a number which indicates the similarity in movie preference between user1 and user2 (where higher numbers indicate greater similarity)
     def similarity user1, user2, users=@usersData
         similar = 0
         for x in users[user1].data.keys
             if users[user2].data.has_key?(x)
-                similar += 5-((users[user1].data[x]-users[user2].data[x]).abs)
+                similar += getScore users, user1, x, user2
                 if users[user1].data[x] == users[user2].data[x]
                     similar += 5
                 end
