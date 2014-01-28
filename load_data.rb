@@ -3,6 +3,8 @@
 require './movie.rb'
 require './user.rb'
 
+##
+# This class loads data from the files 
 class LoadData
 
 	attr_reader :users, :movies
@@ -16,6 +18,7 @@ class LoadData
 		@movies = {}
 	end
 
+    ##
     # returns filename
     def getFilename
         if @set == nil
@@ -28,7 +31,8 @@ class LoadData
         file
     end
 
-	# loads data from file
+	##
+    # loads data from file
     def load_data
         file = getFilename
 		thisK = @k
@@ -42,6 +46,7 @@ class LoadData
         end
     end
 
+    ##
     # loads data to users hash
     def loadToUsers lineArray
         uId = lineArray[0]
@@ -53,6 +58,7 @@ class LoadData
         @users[uId].add mId, rating
     end
 
+    ##
     # loads data to movies hash
     def loadToMovies lineArray
         uId = lineArray[0]

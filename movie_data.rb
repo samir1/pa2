@@ -1,10 +1,13 @@
 # Author: Samir Undavia
 
-require 'awesome_print'
 require './movie.rb'
 require './user.rb'
 require './load_data.rb'
 require './movie_test.rb'
+
+
+##
+# This is the main MovieData class
 
 class MovieData
 
@@ -19,11 +22,13 @@ class MovieData
         @moviesData = dl.movies
     end
 
+    ##
     # returns the rating that user u gave movie m in the training set, and 0 if user u did not rate movie m
     def rating u,m
         @testData.users[u].data[m] == nil ? 0 : @testData.users[u].data[m]
     end
 
+    ##
     # this will generate a number which indicates the similarity in movie preference between user1 and user2 (where higher numbers indicate greater similarity)
     def similarity user1, user2, users=@usersData
         similar = 0
@@ -38,6 +43,7 @@ class MovieData
         similar
     end
 
+    ##
     # this return a list of users whose tastes are most similar to the tastes of user u
     def most_similar u, users=@usersData
         sim = 0
@@ -57,6 +63,7 @@ class MovieData
         simArray
     end
 
+    ##
     # returns a floating point number between 1.0 and 5.0 as an estimate of what user u would rate movie m
     def predict u, m, users=@usersData
         sum = 0.0
@@ -71,16 +78,19 @@ class MovieData
         avg == 0 ? 1 : avg
     end
     
+    ##
     # returns the array of movies that user u has watched
     def movies u
         @usersData[u].data.keys
     end
     
+    ##
     # returns the array of users that have seen movie m
     def viewers m
         @moviesData[m].data.keys
     end
     
+    ##
     # runs the z.predict method on the first k ratings in the test set and returns a MovieTest object containing the results.
     def run_test k=nil
         mt = MovieTest.new
@@ -102,8 +112,7 @@ class MovieData
 end
 
 md = MovieData.new "ml-100k", :u1
-mt = md.run_test 1000
-# ap mt.to_a
+mt = md.run_test
 puts
 puts
 puts

@@ -1,5 +1,7 @@
 # Author: Samir Undavia
 
+##
+# This is the Movie object
 class Movie
     
     attr_accessor :data
@@ -8,12 +10,10 @@ class Movie
         @data = {} # {user_id => rating}
     end
 
+    ##
+    # adds data to the hash 
     def add user_id, rating
         data[user_id] = rating
-    end
-
-    def to_s
-        data
     end
 
 end

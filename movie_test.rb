@@ -1,5 +1,8 @@
 # Author: Samir Undavia
 
+##
+# This class holds the results of the predictions
+
 class MovieTest
 
     attr_accessor :results
@@ -8,11 +11,13 @@ class MovieTest
         @results = []
     end
 
+    ##
     # adds an array of data to @results
     def add u,m,r,p
         @results.push [u,m,r,p]
     end
 
+    ##
     # returns the average predication error (which should be close to zero)
     def mean
         sum = 0.0
@@ -23,8 +28,8 @@ class MovieTest
         return (sum/@results.size)
     end
 
-
-	# returns the standard deviation of the error
+	##
+    # returns the standard deviation of the error
     def stddev
         m = mean
         sum = 0.0
@@ -34,12 +39,13 @@ class MovieTest
         return (Math.sqrt(sum/@results.size))
     end
 
-
-	# returns the root mean square error of the prediction
+	##
+    # returns the root mean square error of the prediction
     def rms
         Math.sqrt(mean**2)
     end
 
+    ##
     # returns an array of the predictions in the form [u,m,r,p]
 	def to_a
         @results
