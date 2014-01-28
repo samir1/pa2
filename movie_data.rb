@@ -1,9 +1,9 @@
 # Author: Samir Undavia
 
-require './movie.rb'
-require './user.rb'
-require './load_data.rb'
-require './movie_test.rb'
+require_relative 'movie'
+require_relative 'user'
+require_relative 'load_data'
+require_relative 'movie_test'
 
 
 ##
@@ -68,7 +68,8 @@ class MovieData
     def predict u, m, users=@usersData
         sum = 0.0
         count = 0
-        for item in most_similar u, users
+        array = most_similar u, users
+        for item in array
             if users[item].data[m] != nil
                 count += 1
                 sum += users[item].data[m]
@@ -112,7 +113,7 @@ class MovieData
 end
 
 md = MovieData.new "ml-100k", :u1
-mt = md.run_test
+mt = md.run_test 10000
 puts
 puts
 puts

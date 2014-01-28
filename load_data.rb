@@ -1,7 +1,7 @@
 # Author:  Samir Undavia
 
-require './movie.rb'
-require './user.rb'
+require_relative 'movie'
+require_relative 'user'
 
 ##
 # This class loads data from the files 
