@@ -41,14 +41,13 @@ class LoadData
             	thisK == 0 ? break : thisK -= 1
             end
             lineArray = line.split("\t").map(&:to_i)
-            loadToUsers lineArray
-            loadToMovies lineArray
+            loadToUsersAndMovies lineArray
         end
     end
 
     ##
-    # loads data to users hash
-    def loadToUsers lineArray
+    # loads data to users hash and movies hash
+    def loadToUsersAndMovies lineArray
         uId = lineArray[0]
         mId = lineArray[1]
         rating = lineArray[2]
@@ -56,14 +55,6 @@ class LoadData
             @users[uId] = User.new
         end
         @users[uId].add mId, rating
-    end
-
-    ##
-    # loads data to movies hash
-    def loadToMovies lineArray
-        uId = lineArray[0]
-        mId = lineArray[1]
-        rating = lineArray[2]
         if !@movies.has_key? mId
             @movies[mId] = Movie.new
         end

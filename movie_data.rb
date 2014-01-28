@@ -113,7 +113,7 @@ class MovieData
 end
 
 md = MovieData.new "ml-100k", :u1
-mt = md.run_test 10000
+mt = md.run_test 1000
 puts
 puts
 puts
