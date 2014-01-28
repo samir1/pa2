@@ -74,8 +74,7 @@ class MovieData
     def predict u, m, users=@usersData
         sum = 0.0
         count = 0
-        array = most_similar u, users
-        for item in array
+        for item in most_similar u, users
             if users[item].data[m] != nil
                 count += 1
                 sum += users[item].data[m]
