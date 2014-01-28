@@ -74,10 +74,12 @@ class MovieData
     def predict u, m, users=@usersData
         sum = 0.0
         count = 0
-        for item in most_similar u, users
-            if users[item].data[m] != nil
+        array = most_similar u, users
+        for item in array
+            rating = users[item].data[m]
+            if rating != nil
                 count += 1
-                sum += users[item].data[m]
+                sum += rating
             end
         end
         avg = count != 0 ? sum/count : (users[u].data.values.inject(0) {|a,b|a+b})/users[u].data.size
