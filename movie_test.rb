@@ -21,7 +21,7 @@ class MovieTest
     # returns the average predication error (which should be close to zero)
     def mean
         sum = 0.0
-        for arr in @results
+        @results.each do |arr|
             error = ((arr[2]-arr[3])/arr[2]).abs
             sum += error
         end
@@ -33,7 +33,7 @@ class MovieTest
     def stddev
         m = mean
         sum = 0.0
-        for arr in @results
+        @results.each do |arr|
             sum += (((((arr[2]-arr[3])/arr[2]).abs)-m)**2)
         end
         return (Math.sqrt(sum/@results.size))

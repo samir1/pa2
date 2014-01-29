@@ -38,7 +38,7 @@ class MovieData
     # this will generate a number which indicates the similarity in movie preference between user1 and user2 (where higher numbers indicate greater similarity)
     def similarity user1, user2, users=@usersData
         similar = 0
-        for x in users[user1].data.keys
+        users[user1].data.keys.each do |x|
             if users[user2].data.has_key?(x)
                 similar += getScore users, user1, x, user2
                 if users[user1].data[x] == users[user2].data[x]
@@ -54,7 +54,7 @@ class MovieData
     def most_similar u, users=@usersData
         sim = 0
         simArray = Array.new
-        for x in users.keys
+        users.keys.each do |x|
             if x != u
                 currentSim = similarity u, x, users
                 if currentSim > sim
@@ -74,8 +74,8 @@ class MovieData
     def predict u, m, users=@usersData
         sum = 0.0
         count = 0
-        array = most_similar u, users
-        for item in array
+        mostSimArr = most_similar u, users
+        mostSimArr.each do |item|
             rating = users[item].data[m]
             if rating != nil
                 count += 1
@@ -108,8 +108,8 @@ class MovieData
         @testData = LoadData.new @folder, @set, :test, k
         @testData.load_data
         testUsers = @testData.users
-        for u in testUsers.keys
-            for m in testUsers[u].data.keys
+        testUsers.keys.each do |u|
+            testUsers[u].data.keys.each do |m|
                 p = predict u, m, testUsers
                 mt.add u, m, (rating u, m), p
             end
