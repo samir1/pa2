@@ -30,7 +30,7 @@ class MovieData
 
     ##
     # returns how far apart the users' ratings are
-    def getScore users, user1, x, user2
+    def score users, user1, x, user2
         5-((users[user1].data[x]-users[user2].data[x]).abs)
     end
 
@@ -40,7 +40,7 @@ class MovieData
         similar = 0
         users[user1].data.keys.each do |x|
             if users[user2].data.has_key?(x)
-                similar += getScore users, user1, x, user2
+                similar += score users, user1, x, user2
                 if users[user1].data[x] == users[user2].data[x]
                     similar += 5
                 end

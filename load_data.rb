@@ -20,7 +20,7 @@ class LoadData
 
     ##
     # returns filename
-    def getFilename
+    def filename
         if @set.nil?
             file = "u.data"
         elsif @test == nil
@@ -34,20 +34,20 @@ class LoadData
 	##
     # loads data from file
     def load_data
-        file = getFilename
+        file = filename
 		thisK = @k
         File.foreach @folder + "/#{file}" do |line|
             if thisK != nil
             	thisK == 0 ? break : thisK -= 1
             end
             lineArray = line.split("\t").map(&:to_i)
-            loadToUsersAndMovies lineArray
+            load_to_users_and_movies lineArray
         end
     end
 
     ##
     # loads data to users hash and movies hash
-    def loadToUsersAndMovies lineArray
+    def load_to_users_and_movies lineArray
         uId = lineArray[0]
         mId = lineArray[1]
         rating = lineArray[2]
