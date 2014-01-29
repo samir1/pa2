@@ -21,7 +21,7 @@ class LoadData
     ##
     # returns filename
     def getFilename
-        if @set == nil
+        if @set.nil?
             file = "u.data"
         elsif @test == nil
             file = [@set, "base"].join(".")
