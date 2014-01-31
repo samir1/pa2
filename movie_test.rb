@@ -42,7 +42,12 @@ class MovieTest
 	##
     # returns the root mean square error of the prediction
     def rms
-        Math.sqrt(mean**2)
+        sum = 0.0
+        @results.each do |arr|
+            error = ((arr[2]-arr[3])/arr[2]).abs
+            sum += (error**2)
+        end
+        return Math.sqrt(sum/@results.size)
     end
 
     ##
