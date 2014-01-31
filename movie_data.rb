@@ -120,9 +120,10 @@ class MovieData
 end
 
 md = MovieData.new "ml-100k", :u1
-mt = md.run_test 10
+mt = md.run_test
 puts
 puts "most_similar 1: #{md.most_similar(1)}"
 puts "rating 1,6: #{md.rating 1,6}"
 puts "Mean: #{mt.mean}"
 puts "Std dev: #{mt.stddev}"
+puts "RMS: #{mt.rms}"
