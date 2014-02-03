@@ -22,7 +22,7 @@ class MovieTest
     def mean
         sum = 0.0
         @results.each do |arr|
-            error = ((arr[2]-arr[3])/arr[2]).abs
+            error = (arr[2]-arr[3]).abs
             sum += error
         end
         return (sum/@results.size)
